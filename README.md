@@ -64,9 +64,6 @@ Chaque spectre propre $\{E_j\}$ est une signature unique du système simulé. Ci
 - **Mandala fractal** — symétries paires entrelacées (ordres 4, 6, 8, 10, 12, 14)
 - **Galaxie spirale** — bras logarithmiques + halo central + étoiles ponctuelles
 
-Le rendu de base code la phase $\phi = \arg(\psi)$ sur la teinte HSV et l'amplitude $|\psi|^2$ sur la valeur :
-
-$$\text{Image}(x,y) = \text{HSV}\!\left(\frac{\phi + \pi}{2\pi},\; 1,\; \frac{|\psi|^2}{\max|\psi|^2}\right)$$
 
 ---
 
@@ -106,7 +103,7 @@ schrodart/
 
 ## Démo en ligne
 
-🔗 [Accéder à l'application sur Streamlit Cloud](#) *[(https://gnm4pxwnrpb6cy3syst6sn.streamlit.app)]*
+🔗 [[Accéder à l'application sur Streamlit Cloud]](https://gnm4pxwnrpb6cy3syst6sn.streamlit.app)
 
 ---
 
