@@ -94,18 +94,6 @@ P2i/
 
 ---
 
-## Screenshots
-
-> _Screenshots coming soon._
-
-| 2D eigenmodes | Time evolution | Quantum art | Cross-validation |
-| :---: | :---: | :---: | :---: |
-| ![2D eigenmodes](docs/screenshots/stationary-2d.png) | ![Time evolution](docs/screenshots/time-1d.png) | ![Quantum art](docs/screenshots/art.png) | ![Cross-validation](docs/screenshots/validation.png) |
-
-<!-- Add images to docs/screenshots/ using the file names above. -->
-
----
-
 ## References
 
 - D. J. Griffiths, *Introduction to Quantum Mechanics*, 3rd ed., Cambridge University Press, 2018.
