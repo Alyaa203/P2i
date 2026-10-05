@@ -1,118 +1,117 @@
+<div align="center">
+
 # SchrödArt 🌌
 
-**Résolution numérique de l'équation de Schrödinger & génération d'art quantique**
+**An interactive web app that solves the Schrödinger equation numerically and turns the results into generative art.**
 
-Application interactive Streamlit qui transforme les solutions de l'équation de Schrödinger en visualisations scientifiques et en images génératives artistiques.
+[Live demo](https://gnm4pxwnrpb6cy3syst6sn.streamlit.app) · [Technical reports](https://github.com/Alyaa203/Liverable)
 
-> Projet informatique individuel — ENSC Bordeaux INP 
-> Auteure : **SAAB Alyaa**
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![NumPy](https://img.shields.io/badge/NumPy-013243?logo=numpy&logoColor=white)
+![SciPy](https://img.shields.io/badge/SciPy-8CAAE6?logo=scipy&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)
+
+</div>
 
 ---
 
-## Aperçu
+## Overview
 
-SchrödArt implémente deux méthodes numériques indépendantes pour résoudre l'équation de Schrödinger, les confronte, puis exploite les spectres propres obtenus pour générer cinq styles d'images artistiques (rosace, nébuleuse, cristal, mandala, galaxie).
+SchrödArt simulates how a quantum particle behaves (the Schrödinger equation) and shows the results as interactive scientific plots and as artwork.
+
+**Why it exists:** it is an individual engineering project at ENSC (Bordeaux INP). The goal was to implement two independent numerical methods, check them against each other, and make the physics visual and accessible through a web interface.
+
+**At a glance:**
+- Two numerical solvers built from scratch: **modal decomposition** (sparse matrix diagonalisation) and **Split-Step Fourier** (FFT)
+- **Cross-validation** between the two methods, with a relative error of about 2–4%
+- Energy spectra turned into **5 styles of generative art**
+- Deployed online with Streamlit Cloud
 
 $$i\hbar \frac{\partial \psi}{\partial t} = -\frac{\hbar^2}{2m}\nabla^2\psi + V(x,t)\psi$$
 
 ---
 
-## Fonctionnalités
+## Features
 
-L'application est organisée en quatre onglets accessibles depuis la barre latérale :
+| Tab | What it does |
+| --- | --- |
+| **2D stationary regime** | Builds the 2D Hamiltonian, computes the lowest-energy eigenstates and shows each mode and the Gaussian potential |
+| **1D time-dependent regime** | Animates how the probability density evolves over time, with a 3D surface view |
+| **Quantum art** | Generates images from the computed eigenvalues: rosette, nebula, crystal, fractal mandala, spiral galaxy |
+| **Split-Step Fourier** | Simulates a wave packet step by step in 3 scenarios: **tunnelling** through a barrier, **harmonic oscillator**, **double well** |
+| **Cross-validation** | Runs both methods on the same problem and reports the relative error between them |
 
-| Onglet | Description |
-|--------|-------------|
-| **Régime stationnaire 2D** | Diagonalisation du hamiltonien 2D — visualisation des modes propres et du potentiel gaussien |
-| **Régime dépendant du temps 1D** | Évolution temporelle par décomposition modale — densité de probabilité et surface 3D |
-| **Art quantique** | Génération d'images à partir des valeurs propres (5 styles artistiques) |
-| **Split-Step Fourier** | Simulation directe de ψ par la méthode de Strang — 3 scénarios physiques |
-
----
-
-## Méthodes numériques
-
-### Méthode 1 — Décomposition modale (`simulation.py`)
-
-Le hamiltonien 2D est construit avec un produit de Kronecker sur la matrice de différences finies :
-
-$$H = -\frac{1}{2}(D_x \otimes I + I \otimes D_y) + V$$
-
-La diagonalisation creuse (ARPACK via `scipy.sparse.linalg.eigsh`) extrait les $k$ états propres de plus basse énergie. L'évolution temporelle est ensuite calculée analytiquement :
-
-$$\psi(x, t) = \sum_j c_j \psi_j(x)\, e^{-iE_j t}$$
-
-La norme est conservée exactement puisque $|e^{-iE_j t}| = 1$.
-
-### Méthode 2 — Split-Step Fourier (`Fourier.py`)
-
-Intégration directe de l'équation pas à pas, par le schéma de Strang (ordre 2) :
-
-$$\psi(x, t+\Delta t) \approx e^{-iV\Delta t/2} \cdot \mathcal{F}^{-1}\!\left[e^{-ik^2\Delta t}\,\mathcal{F}[\cdot]\right] \cdot e^{-iV\Delta t/2}\,\psi(x,t)$$
-
-Trois scénarios sont disponibles : **effet tunnel** (barrière), **oscillateur harmonique**, **double puits**.
+All physical parameters (grid size, number of modes, potential position, width and depth, time) can be changed live with sliders.
 
 ---
 
-## Art quantique
+## Tech stack
 
-Chaque spectre propre $\{E_j\}$ est une signature unique du système simulé. Cinq générateurs l'exploitent comme paramètre de fonctions mathématiques complexes :
+| Area | Tools |
+| --- | --- |
+| Language | Python 3.11 |
+| Numerical computing | NumPy (vectors, FFT), SciPy (sparse matrices, `eigsh` / ARPACK, `eigh_tridiagonal`) |
+| Visualisation | Matplotlib, Pillow (GIF export) |
+| Web interface | Streamlit |
+| Deployment | Streamlit Community Cloud, Dev Container (GitHub Codespaces) |
 
-- **Rosace** — ondes stationnaires en coordonnées polaires
-- **Nébuleuse** — anneaux gaussiens et filaments d'ondes planes
-- **Cristal** — symétries $n$-aires ($n = 3$ à $10$) atténuées exponentiellement
-- **Mandala fractal** — symétries paires entrelacées (ordres 4, 6, 8, 10, 12, 14)
-- **Galaxie spirale** — bras logarithmiques + halo central + étoiles ponctuelles
+### Numerical methods in brief
 
+- **Modal decomposition** (`simulation.py`): the 2D Hamiltonian is built with a Kronecker product of finite-difference matrices, $H = -\tfrac{1}{2}(D_x \otimes I + I \otimes D_y) + V$, then diagonalised with sparse ARPACK. The time evolution is exact for each mode, $\psi(x,t) = \sum_j c_j \psi_j(x) e^{-iE_j t}$, so the norm is conserved.
+- **Split-Step Fourier** (`Fourier.py`): second-order Strang splitting, alternating half-steps in position space and full steps in momentum space via FFT.
 
 ---
 
-## Installation
+## Getting started
+
+**Easiest:** open the [live demo](https://gnm4pxwnrpb6cy3syst6sn.streamlit.app). It may take a minute to wake up.
+
+**Run locally** (Python 3.9+):
 
 ```bash
-git clone https://github.com/<votre-username>/schrodart.git
-cd schrodart
+git clone https://github.com/Alyaa203/P2i.git
+cd P2i
 pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
-### Dépendances
+Then open http://localhost:8501.
 
-| Bibliothèque | Rôle |
-|---|---|
-| `streamlit >= 1.30` | Interface web interactive |
-| `numpy >= 1.24` | Calcul vectoriel et FFT |
-| `scipy >= 1.10` | Algèbre linéaire creuse, diagonalisation |
-| `matplotlib >= 3.7` | Tracés scientifiques |
-| `pillow >= 9.0` | Génération et export GIF |
+> **Note:** open the *2D stationary* or *1D time-dependent* tab first. The *Quantum art* tab uses the eigenvalues they compute.
 
----
+You can also open the repo in **GitHub Codespaces**: the Dev Container installs everything and starts the app automatically.
 
-## Structure du projet
+### Project structure
 
 ```
-schrodart/
-├── streamlit_app.py   # Interface principale Streamlit
-├── simulation.py      # Méthode modale (stationnaire 2D + temporel 1D)
-├── Fourier.py         # Méthode Split-Step Fourier
-├── visualisation.py   # Rendus artistiques (5 styles)
-└── requirements.txt   # Dépendances Python
+P2i/
+├── streamlit_app.py   # Web interface (5 tabs)
+├── simulation.py      # Modal method (2D stationary + 1D time-dependent)
+├── Fourier.py         # Split-Step Fourier method
+├── visualisation.py   # Generative art (5 styles)
+└── requirements.txt
 ```
 
 ---
 
-## Démo en ligne
+## Screenshots
 
-🔗 [[Accéder à l'application sur Streamlit Cloud]](https://gnm4pxwnrpb6cy3syst6sn.streamlit.app)
+> _Screenshots coming soon._
+
+| 2D eigenmodes | Time evolution | Quantum art | Cross-validation |
+| :---: | :---: | :---: | :---: |
+| ![2D eigenmodes](docs/screenshots/stationary-2d.png) | ![Time evolution](docs/screenshots/time-1d.png) | ![Quantum art](docs/screenshots/art.png) | ![Cross-validation](docs/screenshots/validation.png) |
+
+<!-- Add images to docs/screenshots/ using the file names above. -->
+
+---
+
+## References
+
+- D. J. Griffiths, *Introduction to Quantum Mechanics*, 3rd ed., Cambridge University Press, 2018.
+- D. J. Tannor, *Introduction to Quantum Mechanics: A Time-Dependent Perspective*, University Science Books, 2007.
+- G. Strang, "On the construction and comparison of difference schemes", *SIAM J. Numer. Anal.*, 1968.
 
 ---
 
-## Références
-
-- Griffiths, D.J. *Introduction to Quantum Mechanics*, 3e éd., Cambridge University Press, 2018.
-- Tannor, D.J. *Introduction to Quantum Mechanics: A Time-Dependent Perspective*, University Science Books, 2007.
-- Strang, G. *On the construction and comparison of difference schemes*, SIAM J. Numer. Anal., 1968.
-- [Documentation SciPy — `eigsh`](https://docs.scipy.org/doc/scipy/)
-- [Documentation Streamlit](https://docs.streamlit.io)
-
----
+**Author:** Alyaa Saab, engineering student at ENSC (Bordeaux INP)
